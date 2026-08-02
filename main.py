@@ -253,9 +253,13 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
         await ctx.send(f"❌ Ошибка при выдаче ролей: {e}")
         return
 
-    # Лог в канал (ТОЛЬКО ЭМБЕД С ПИНГАМИ!)
+    # Лог в канал (СНАЧАЛА ПИНГ, ПОТОМ ЭМБЕД!)
     канал_логов = bot.get_channel(ID_КАНАЛА_ЛОГОВ_ОТПУСКА)
     if канал_логов:
+        # ОТДЕЛЬНЫЙ ПИНГ ЮЗЕРОВ (как в !принять_пилот)
+        await канал_логов.send(f"{ctx.author.mention} выдал отпуск {member.mention}")
+
+        # ЭМБЕД С ПИНГАМИ ВНУТРИ
         embed = discord.Embed(
             title="📋 ОТПУСК",
             description=f"Сотрудник {ctx.author.mention} выдал отпуск {member.mention}",
@@ -282,6 +286,9 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
                     pass
 
             if канал_логов:
+                # ОТДЕЛЬНЫЙ ПИНГ (как в !принять_пилот)
+                await канал_логов.send(f"Отпуск {member.mention} закончен!")
+
                 embed = discord.Embed(
                     title="📋 ОТПУСК ЗАКОНЧЕН",
                     description=f"Отпуск {member.mention} был закончен",
@@ -299,7 +306,6 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
             print(f"Ошибка при возврате ролей для {member.name}: {e}")
 
     asyncio.create_task(вернуть_роли())
-
 # --------------------------------------------
 # ОСТАЛЬНЫЕ КОМАНДЫ
 # --------------------------------------------
