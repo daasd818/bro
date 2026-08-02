@@ -253,13 +253,9 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
         await ctx.send(f"❌ Ошибка при выдаче ролей: {e}")
         return
 
-    # Лог в канал
+    # Лог в канал (ТОЛЬКО ЭМБЕД С ПИНГАМИ!)
     канал_логов = bot.get_channel(ID_КАНАЛА_ЛОГОВ_ОТПУСКА)
     if канал_логов:
-        # ОТДЕЛЬНЫЙ ПИНГ ЮЗЕРОВ (чтобы они увидели уведомление)
-        await канал_логов.send(f"{ctx.author.mention} выдал отпуск {member.mention}")
-
-        # ЭМБЕД С ПИНГАМИ ЮЗЕРОВ!
         embed = discord.Embed(
             title="📋 ОТПУСК",
             description=f"Сотрудник {ctx.author.mention} выдал отпуск {member.mention}",
@@ -271,8 +267,7 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
         embed.set_footer(text=f"ID: {member.id} | {datetime.now().strftime('%d.%m.%Y %H:%M')}")
         await канал_логов.send(embed=embed)
 
-    # ОТДЕЛЬНЫЙ ПИНГ В ЧАТЕ ГДЕ БЫЛА КОМАНДА
-    await ctx.send(f"{member.mention} получил роль отпуска на **{время}**!")
+    await ctx.send(f"✅ {member.mention} получил роль отпуска на **{время}**!")
 
     # Функция возврата ролей
     async def вернуть_роли():
@@ -287,10 +282,6 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
                     pass
 
             if канал_логов:
-                # ОТДЕЛЬНЫЙ ПИНГ ЮЗЕРА
-                await канал_логов.send(f"Отпуск {member.mention} закончен!")
-
-                # ЭМБЕД С ПИНГОМ ЮЗЕРА!
                 embed = discord.Embed(
                     title="📋 ОТПУСК ЗАКОНЧЕН",
                     description=f"Отпуск {member.mention} был закончен",
