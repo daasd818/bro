@@ -256,9 +256,13 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
     # Лог в канал
     канал_логов = bot.get_channel(ID_КАНАЛА_ЛОГОВ_ОТПУСКА)
     if канал_логов:
+        # ОТДЕЛЬНЫЙ ПИНГ ЮЗЕРОВ (чтобы они увидели уведомление)
+        await канал_логов.send(f"{ctx.author.mention} выдал отпуск {member.mention}")
+
+        # ЭМБЕД С ПИНГАМИ ЮЗЕРОВ!
         embed = discord.Embed(
             title="📋 ОТПУСК",
-            description=f"Сотрудник {ctx.author.name} выдал отпуск {member.name}",
+            description=f"Сотрудник {ctx.author.mention} выдал отпуск {member.mention}",
             color=discord.Color.light_grey()
         )
         embed.add_field(name="⏰ Время", value=время, inline=True)
@@ -267,7 +271,8 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
         embed.set_footer(text=f"ID: {member.id} | {datetime.now().strftime('%d.%m.%Y %H:%M')}")
         await канал_логов.send(embed=embed)
 
-    await ctx.send(f"✅ {member.mention} получил роль отпуска на **{время}**!")
+    # ОТДЕЛЬНЫЙ ПИНГ В ЧАТЕ ГДЕ БЫЛА КОМАНДА
+    await ctx.send(f"{member.mention} получил роль отпуска на **{время}**!")
 
     # Функция возврата ролей
     async def вернуть_роли():
@@ -282,9 +287,13 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
                     pass
 
             if канал_логов:
+                # ОТДЕЛЬНЫЙ ПИНГ ЮЗЕРА
+                await канал_логов.send(f"Отпуск {member.mention} закончен!")
+
+                # ЭМБЕД С ПИНГОМ ЮЗЕРА!
                 embed = discord.Embed(
                     title="📋 ОТПУСК ЗАКОНЧЕН",
-                    description=f"Отпуск {member.name} был закончен",
+                    description=f"Отпуск {member.mention} был закончен",
                     color=discord.Color.light_grey()
                 )
                 embed.add_field(name="📌 Возвращены роли", value=", ".join(имена_старых_ролей) if имена_старых_ролей else "Нет", inline=False)
@@ -299,7 +308,6 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
             print(f"Ошибка при возврате ролей для {member.name}: {e}")
 
     asyncio.create_task(вернуть_роли())
-
 
 # --------------------------------------------
 # ОСТАЛЬНЫЕ КОМАНДЫ
