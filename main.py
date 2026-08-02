@@ -6,11 +6,7 @@ import random
 # --------------------------------------------
 # ТОКЕН
 # --------------------------------------------
-TOKEN = os.getenv('TOKEN')
-print(f"Токен загружен: {TOKEN[:10]}...")  # Покажет первые 10 символов
-if not TOKEN:
-    print("❌ ТОКЕН ПУСТОЙ!")
-    exit()
+TOKEN = 'MTUzMzA1NjQ5OTIzNTE2NDE5MQ.GYQjD_.a_7Qxd0zviG810gS084PmwyHtcjvDUVln5acho'
 PREFIX = '!'
 
 # ===== НАСТРОЙКИ (МЕНЯЙ ТУТ!) =====
