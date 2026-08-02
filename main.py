@@ -35,10 +35,10 @@ ID_РОЛЕЙ_ДЛЯ_ОТПУСКА = [
     1531926196281933844,  # админ
 ]
 
-# Роль, которая выдаётся во время отпуска (ЗАМЕНИ НА СВОЮ!)
+# Роль, которая выдаётся во время отпуска
 ID_РОЛЬ_ОТПУСКА = 1531928033462587402
 
-# Канал, куда летят логи по отпускам (ЗАМЕНИ НА СВОЙ!)
+# Канал, куда летят логи по отпускам
 ID_КАНАЛА_ЛОГОВ_ОТПУСКА = 1533401160013316166
 
 # --------------------------------------------
@@ -130,12 +130,12 @@ async def принять_пилот(ctx, принимающий: discord.Member,
 
             embed = discord.Embed(
                 title="✅ ЗАЯВКА ОДОБРЕНА",
-                description=f"**{принимающий.mention}** ПРИНЯЛ **{принявший.mention}**",
+                description=f"{принимающий.name} ПРИНЯЛ {принявший.name}",
                 color=discord.Color.green()
             )
             embed.add_field(name="Статус", value="☑ Разрешено", inline=False)
             embed.add_field(name="Выданные роли", value=список_ролей, inline=False)
-            embed.add_field(name="Кто принял", value=interaction.user.mention, inline=True)
+            embed.add_field(name="Кто принял", value=interaction.user.name, inline=True)
             embed.add_field(name="Время", value=discord.utils.utcnow().strftime("%H:%M:%S"), inline=True)
 
             await interaction.response.edit_message(embed=embed, view=None)
@@ -149,11 +149,11 @@ async def принять_пилот(ctx, принимающий: discord.Member,
 
             embed = discord.Embed(
                 title="❌ ЗАЯВКА ОТКЛОНЕНА",
-                description=f"**{принимающий.mention}** ХОТЕЛ ПРИНЯТЬ **{принявший.mention}**",
+                description=f"{принимающий.name} ХОТЕЛ ПРИНЯТЬ {принявший.name}",
                 color=discord.Color.red()
             )
             embed.add_field(name="Статус", value="☑ Отказано", inline=False)
-            embed.add_field(name="Кто отказал", value=interaction.user.mention, inline=True)
+            embed.add_field(name="Кто отказал", value=interaction.user.name, inline=True)
             embed.add_field(name="Время", value=discord.utils.utcnow().strftime("%H:%M:%S"), inline=True)
 
             await interaction.response.edit_message(embed=embed, view=None)
@@ -163,15 +163,16 @@ async def принять_пилот(ctx, принимающий: discord.Member,
 
     embed = discord.Embed(
         title="📋 НОВАЯ ЗАЯВКА",
-        description=f"**{принимающий.mention}** ХОЧЕТ ПРИНЯТЬ **{принявший.mention}**",
+        description=f"{принимающий.name} ХОЧЕТ ПРИНЯТЬ {принявший.name}",
         color=discord.Color.dark_grey()
     )
-    embed.add_field(name="Кто принимает", value=принимающий.mention, inline=True)
-    embed.add_field(name="Кого принимают", value=принявший.mention, inline=True)
+    embed.add_field(name="Кто принимает", value=принимающий.name, inline=True)
+    embed.add_field(name="Кого принимают", value=принявший.name, inline=True)
     embed.add_field(name="Роли для выдачи", value=список_ролей, inline=False)
     embed.add_field(name="Статус", value="⏳ Ожидание решения...", inline=False)
     embed.set_footer(text=f"Заявка от {ctx.author.name} | {discord.utils.utcnow().strftime('%d.%m.%Y %H:%M')}")
 
+    # ПИНГ РОЛИ ОТДЕЛЬНО (ПЕРЕД ЭМБЕДОМ)
     await канал.send(f"**ВНИМАНИЕ {роль_админа.mention}**")
     view = ЗаявкаView()
     await канал.send(embed=embed, view=view)
@@ -257,7 +258,7 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
     if канал_логов:
         embed = discord.Embed(
             title="📋 ОТПУСК",
-            description=f"**Сотрудник** {ctx.author.mention} выдал отпуск {member.mention}",
+            description=f"Сотрудник {ctx.author.name} выдал отпуск {member.name}",
             color=discord.Color.light_grey()
         )
         embed.add_field(name="⏰ Время", value=время, inline=True)
@@ -283,7 +284,7 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
             if канал_логов:
                 embed = discord.Embed(
                     title="📋 ОТПУСК ЗАКОНЧЕН",
-                    description=f"**Отпуск** {member.mention} был закончен",
+                    description=f"Отпуск {member.name} был закончен",
                     color=discord.Color.light_grey()
                 )
                 embed.add_field(name="📌 Возвращены роли", value=", ".join(имена_старых_ролей) if имена_старых_ролей else "Нет", inline=False)
