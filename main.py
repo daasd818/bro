@@ -6,7 +6,7 @@ import random
 # --------------------------------------------
 # ТОКЕН
 # --------------------------------------------
-TOKEN = 'MTUzMzA1NjQ5OTIzNTE2NDE5MQ.GYQjD_.a_7Qxd0zviG810gS084PmwyHtcjvDUVln5acho'
+TOKEN = os.getenv('TOKEN')
 PREFIX = '!'
 
 # ===== НАСТРОЙКИ (МЕНЯЙ ТУТ!) =====
