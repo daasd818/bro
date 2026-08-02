@@ -6,7 +6,11 @@ import random
 # --------------------------------------------
 # ТОКЕН
 # --------------------------------------------
+import os
 TOKEN = os.getenv('TOKEN')
+print(f"Токен: {TOKEN}")
+print(f"Длина токена: {len(TOKEN) if TOKEN else 0}")
+print(f"Первые 10 символов: {TOKEN[:10] if TOKEN else 'ПУСТО'}")
 PREFIX = '!'
 
 # ===== НАСТРОЙКИ (МЕНЯЙ ТУТ!) =====
