@@ -239,19 +239,30 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
         await ctx.send("❌ Пользователь не найден на сервере!")
         return
 
-    роль_отпуска = ctx.guild.get_role(ID_РОЛЬ_ОТПУСКА)
-    if not роль_отпуска:
-        await ctx.send("❌ Роль отпуска не найдена! Проверь ID_РОЛЬ_ОТПУСКА")
+    # Получаем ВСЕ роли отпуска
+    роли_отпуска = []
+    for id_роли in СПИСОК_РОЛЕЙ_ОТПУСКА:
+        роль = ctx.guild.get_role(id_роли)
+        if роль:
+            роли_отпуска.append(роль)
+        else:
+            await ctx.send(f"⚠️ Роль с ID {id_роли} не найдена!")
+            return
+
+    if not роли_отпуска:
+        await ctx.send("❌ Ни одна роль отпуска не найдена! Проверь СПИСОК_РОЛЕЙ_ОТПУСКА")
         return
 
     # Сохраняем старые роли
     старые_роли = [role for role in member.roles if role.name != "@everyone"]
     имена_старых_ролей = [role.name for role in старые_роли]
+    имена_ролей_отпуска = [role.name for role in роли_отпуска]
 
     # Меняем роли
     try:
         await member.edit(roles=[])
-        await member.add_roles(роль_отпуска)
+        for роль in роли_отпуска:
+            await member.add_roles(роль)
     except Exception as e:
         await ctx.send(f"❌ Ошибка при выдаче ролей: {e}")
         return
@@ -259,7 +270,7 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
     # Лог в канал (СНАЧАЛА ПИНГ, ПОТОМ ЭМБЕД!)
     канал_логов = bot.get_channel(ID_КАНАЛА_ЛОГОВ_ОТПУСКА)
     if канал_логов:
-        # ОТДЕЛЬНЫЙ ПИНГ ЮЗЕРОВ (как в !принять_пилот)
+        # ОТДЕЛЬНЫЙ ПИНГ ЮЗЕРОВ
         await канал_логов.send(f"{ctx.author.mention} выдал отпуск {member.mention}")
 
         # ЭМБЕД С ПИНГАМИ ВНУТРИ
@@ -270,7 +281,7 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
         )
         embed.add_field(name="⏰ Время", value=время, inline=True)
         embed.add_field(name="📌 Снятые роли", value=", ".join(имена_старых_ролей) if имена_старых_ролей else "Нет", inline=False)
-        embed.add_field(name="📌 Выданные роли", value=роль_отпуска.name, inline=False)
+        embed.add_field(name="📌 Выданные роли", value=", ".join(имена_ролей_отпуска), inline=False)
         embed.set_footer(text=f"ID: {member.id} | {datetime.now().strftime('%d.%m.%Y %H:%M')}")
         await канал_логов.send(embed=embed)
 
@@ -281,7 +292,14 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
         await asyncio.sleep(seconds)
 
         try:
-            await member.remove_roles(роль_отпуска)
+            # Убираем ВСЕ роли отпуска
+            for роль in роли_отпуска:
+                try:
+                    await member.remove_roles(роль)
+                except:
+                    pass
+
+            # Возвращаем старые роли
             for role in старые_роли:
                 try:
                     await member.add_roles(role)
@@ -289,7 +307,7 @@ async def отпуск_пилот(ctx, member: discord.Member, время: str):
                     pass
 
             if канал_логов:
-                # ОТДЕЛЬНЫЙ ПИНГ (как в !принять_пилот)
+                # ОТДЕЛЬНЫЙ ПИНГ
                 await канал_логов.send(f"Отпуск {member.mention} закончен!")
 
                 embed = discord.Embed(
